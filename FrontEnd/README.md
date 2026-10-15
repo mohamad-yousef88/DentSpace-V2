@@ -904,7 +904,3 @@ If a cache schema changes, review the box and cache-key versioning strategy befo
 
 ---
 
-## License
-
-Add the project's license information here if the repository is distributed under an open-source license.
-
