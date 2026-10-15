@@ -1,0 +1,126 @@
+{% extends "layouts/admin.html" %}
+
+{% block title %}{{ 'تفاصيل الحالة #' + case.id|string }} · DentSpace{% endblock %}
+{% block page_title %}{{ 'الحالة #' + case.id|string }}{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl space-y-5">
+
+  <a href="/admin/cases" class="inline-flex items-center gap-1.5 text-sm text-content-secondary hover:text-content transition-colors">
+    <svg class="w-4 h-4 {{ 'rotate-180' if locale == 'ar' else '' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M15 19l-7-7 7-7"/>
+    </svg>
+    {{ 'العودة للحالات' if locale == 'ar' else 'Back to cases' }}
+  </a>
+
+  <div class="card">
+    <div class="flex items-start justify-between gap-4">
+      <div class="min-w-0">
+        <h2 class="text-xl font-bold text-content">{{ case.suspected_condition }}</h2>
+        <p class="text-sm text-content-secondary mt-1">
+          {{ case.location }} ·
+          {{ 'شدة الألم: ' + case.pain_level|string if locale == 'ar' else 'Pain: ' + case.pain_level|string }}
+        </p>
+      </div>
+      {% set s = case.status.value %}
+      {% if s == 'completed' %}
+        <span class="badge badge-warning">{{ 'بانتظار المراجعة' if locale == 'ar' else 'Awaiting review' }}</span>
+      {% elif s == 'verified' %}
+        <span class="badge badge-success">{{ 'موثّقة' if locale == 'ar' else 'Verified' }}</span>
+      {% elif s == 'booked' %}
+        <span class="badge badge-info">{{ 'محجوزة' if locale == 'ar' else 'Booked' }}</span>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+    {% if patient %}
+      <div class="card">
+        <p class="text-xs font-semibold text-content-tertiary uppercase mb-2">{{ 'المريض' if locale == 'ar' else 'Patient' }}</p>
+        <p class="font-semibold text-content">{{ patient.full_name }}</p>
+        <p class="text-sm text-content-secondary mt-1" dir="ltr">{{ patient.phone }}</p>
+      </div>
+    {% endif %}
+    {% if doctor %}
+      <div class="card">
+        <p class="text-xs font-semibold text-content-tertiary uppercase mb-2">{{ 'الطبيب' if locale == 'ar' else 'Doctor' }}</p>
+        <p class="font-semibold text-content">{{ doctor.full_name }}</p>
+        <p class="text-sm text-content-secondary mt-1" dir="ltr">{{ doctor.phone }}</p>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <p class="text-xs font-semibold text-content-tertiary uppercase mb-3">{{ 'الأعراض' if locale == 'ar' else 'Symptoms' }}</p>
+    <div class="flex flex-wrap gap-2">
+      {% for s in case.symptoms %}
+        <span class="badge badge-neutral">{{ s }}</span>
+      {% endfor %}
+    </div>
+  </div>
+
+  {% if case.image_urls %}
+    <div class="card">
+      <p class="text-xs font-semibold text-content-tertiary uppercase mb-3">{{ 'الصور' if locale == 'ar' else 'Images' }}</p>
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+        {% for url in case.image_urls %}
+          <a href="{{ url }}" target="_blank" rel="noopener"
+             class="aspect-square rounded-xl overflow-hidden border border-line hover:border-primary transition-colors">
+            <img src="{{ url }}" alt="" class="w-full h-full object-cover">
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  {% if case.status.value == 'completed' %}
+    <div class="card border-2 border-warning/40 bg-warning/5">
+      <div class="flex items-start gap-3 mb-5">
+        <div class="w-10 h-10 rounded-xl bg-warning/15 text-warning flex items-center justify-center shrink-0">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 9v2m0 4h.01M5.07 19h13.86a2 2 0 001.74-3l-6.93-12a2 2 0 00-3.48 0L2.33 16a2 2 0 001.74 3z"/>
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold text-content">{{ 'قرار المراجعة' if locale == 'ar' else 'Review decision' }}</h3>
+          <p class="text-sm text-content-secondary mt-1">
+            {{ 'راجع التفاصيل ثم اختر الإجراء المناسب' if locale == 'ar' else 'Review details then choose an action' }}
+          </p>
+        </div>
+      </div>
+
+      <form method="post" action="/admin/cases/{{ case.id }}/verify" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-content mb-1.5">
+            {{ 'ملاحظات (اختياري)' if locale == 'ar' else 'Notes (optional)' }}
+          </label>
+          <textarea name="notes" rows="3" maxlength="1000"
+                    class="input"
+                    placeholder="{{ 'سبب الرفض إن وُجد' if locale == 'ar' else 'Reason if rejecting' }}"></textarea>
+        </div>
+
+        <div class="flex flex-wrap gap-3">
+          <button type="submit" name="approve" value="true"
+                  class="btn btn-primary flex-1 sm:flex-initial min-w-[160px]">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 6L9 17l-5-5"/>
+            </svg>
+            {{ 'توثيق العلاج' if locale == 'ar' else 'Verify treatment' }}
+          </button>
+          <button type="submit" name="approve" value="false"
+                  class="btn btn-danger flex-1 sm:flex-initial min-w-[160px]"
+                  data-confirm="{% if locale == 'ar' %}رفض هذه الحالة؟{% else %}Reject this case?{% endif %}"
+                  data-confirm-ok="{% if locale == 'ar' %}رفض{% else %}Reject{% endif %}"
+                  data-confirm-danger="1">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 6L6 18M6 6l12 12"/>
+            </svg>
+            {{ 'رفض' if locale == 'ar' else 'Reject' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}

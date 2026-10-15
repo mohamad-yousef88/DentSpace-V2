@@ -1,0 +1,110 @@
+{% extends "layouts/admin.html" %}
+
+{% block title %}{{ 'إضافة طبيب' if locale == 'ar' else 'Add doctor' }} · DentSpace{% endblock %}
+{% block page_title %}{{ 'إضافة طبيب' if locale == 'ar' else 'Add doctor' }}{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl">
+
+  <div class="card">
+    <form method="post" action="/admin/doctors/new" class="space-y-5">
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+        <div class="md:col-span-2">
+          <label class="block text-sm font-semibold text-content mb-1.5">
+            {{ 'الاسم الكامل' if locale == 'ar' else 'Full name' }}
+            <span class="text-danger">*</span>
+          </label>
+          <input type="text" name="full_name" required minlength="10" maxlength="150"
+                 class="input" placeholder="{{ 'مثال: د. أحمد محمد علي' if locale == 'ar' else 'e.g. Dr. John Smith' }}">
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-content mb-1.5">
+            {{ 'البريد الإلكتروني' if locale == 'ar' else 'Email' }}
+            <span class="text-danger">*</span>
+          </label>
+          <input type="email" name="email" required dir="ltr"
+                 class="input" placeholder="doctor@dentspace.app">
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-content mb-1.5">
+            {{ 'رقم الهاتف' if locale == 'ar' else 'Phone' }}
+            <span class="text-danger">*</span>
+          </label>
+          <input type="tel" name="phone" required
+                 class="input" placeholder="09xxxxxxxx" dir="ltr">
+        </div>
+
+        <div class="md:col-span-2">
+          <label class="block text-sm font-semibold text-content mb-1.5">
+            {{ 'كلمة المرور' if locale == 'ar' else 'Password' }}
+            <span class="text-danger">*</span>
+          </label>
+          <input type="password" name="password" required minlength="12"
+                 class="input" placeholder="••••••••••••">
+          <p class="text-xs text-content-tertiary mt-1.5">
+            {{ '12 حرفاً على الأقل، مع حرف كبير وصغير ورقم ورمز خاص' if locale == 'ar' else
+               'Min 12 chars, with uppercase, lowercase, digit, and symbol' }}
+          </p>
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-content mb-1.5">
+            {{ 'الرقم الجامعي' if locale == 'ar' else 'University ID' }}
+            <span class="text-danger">*</span>
+          </label>
+          <input type="text" name="university_id" required minlength="3" maxlength="50"
+                 class="input" placeholder="UNI-12345" dir="ltr">
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-content mb-1.5">
+            {{ 'العمر' if locale == 'ar' else 'Age' }}
+            <span class="text-danger">*</span>
+          </label>
+          <input type="number" name="age" required min="18" max="80" value="30" class="input">
+        </div>
+
+        <div class="md:col-span-2">
+          <label class="block text-sm font-semibold text-content mb-1.5">
+            {{ 'الجنس' if locale == 'ar' else 'Gender' }}
+            <span class="text-danger">*</span>
+          </label>
+          <div class="flex gap-3">
+            <label class="flex-1 cursor-pointer">
+              <input type="radio" name="gender" value="male" class="peer sr-only" checked>
+              <div class="text-center px-4 py-3 rounded-xl border border-line
+                          peer-checked:border-primary peer-checked:bg-primary/10
+                          peer-checked:text-primary transition-colors font-medium">
+                {{ 'ذكر' if locale == 'ar' else 'Male' }}
+              </div>
+            </label>
+            <label class="flex-1 cursor-pointer">
+              <input type="radio" name="gender" value="female" class="peer sr-only">
+              <div class="text-center px-4 py-3 rounded-xl border border-line
+                          peer-checked:border-primary peer-checked:bg-primary/10
+                          peer-checked:text-primary transition-colors font-medium">
+                {{ 'أنثى' if locale == 'ar' else 'Female' }}
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex gap-3 pt-4 border-t border-line">
+        <button type="submit" class="btn btn-primary">
+          {{ 'إنشاء الحساب' if locale == 'ar' else 'Create account' }}
+        </button>
+        <a href="/admin/doctors" class="btn btn-ghost">
+          {{ 'إلغاء' if locale == 'ar' else 'Cancel' }}
+        </a>
+      </div>
+
+    </form>
+  </div>
+
+</div>
+{% endblock %}

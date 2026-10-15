@@ -1,0 +1,83 @@
+{% extends "layouts/admin.html" %}
+
+{% block title %}{{ 'الحالات' if locale == 'ar' else 'Cases' }} · DentSpace{% endblock %}
+{% block page_title %}{{ 'الحالات' if locale == 'ar' else 'Cases' }}{% endblock %}
+
+{% block content %}
+<div class="space-y-5 max-w-7xl">
+
+  <div class="card p-2 flex flex-wrap gap-1">
+    {% set tabs = [
+      ('', 'الكل', 'All'),
+      ('completed', 'بانتظار المراجعة', 'Awaiting review'),
+      ('verified', 'موثّقة', 'Verified'),
+      ('booked', 'محجوزة', 'Booked'),
+      ('pending', 'قيد الانتظار', 'Pending'),
+    ] %}
+    {% for value, ar, en in tabs %}
+      <a href="/admin/cases{% if value %}?status={{ value }}{% endif %}"
+         class="px-4 py-2 rounded-lg text-sm font-medium transition-colors
+                {% if status_filter == value %}
+                  bg-primary/10 text-primary
+                {% else %}
+                  text-content-secondary hover:bg-surface-variant
+                {% endif %}">
+        {{ ar if locale == 'ar' else en }}
+      </a>
+    {% endfor %}
+  </div>
+
+  <div class="card p-0 overflow-hidden">
+    {% if cases %}
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-line bg-surface-variant/50">
+              <th class="text-start px-4 py-3 text-xs font-semibold text-content-secondary uppercase">#</th>
+              <th class="text-start px-4 py-3 text-xs font-semibold text-content-secondary uppercase">{{ 'المريض' if locale == 'ar' else 'Patient' }}</th>
+              <th class="text-start px-4 py-3 text-xs font-semibold text-content-secondary uppercase">{{ 'الطبيب' if locale == 'ar' else 'Doctor' }}</th>
+              <th class="text-start px-4 py-3 text-xs font-semibold text-content-secondary uppercase">{{ 'الحالة' if locale == 'ar' else 'Condition' }}</th>
+              <th class="text-start px-4 py-3 text-xs font-semibold text-content-secondary uppercase">{{ 'الحالة' if locale == 'ar' else 'Status' }}</th>
+              <th class="text-end px-4 py-3"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for c in cases %}
+              <tr class="border-b border-line last:border-0 hover:bg-surface-variant/40 transition-colors">
+                <td class="px-4 py-3 text-content-tertiary">#{{ c.id }}</td>
+                <td class="px-4 py-3 text-content">{{ c.patient_name or '—' }}</td>
+                <td class="px-4 py-3 text-content">{{ c.doctor_name or '—' }}</td>
+                <td class="px-4 py-3 text-content truncate max-w-[200px]">{{ c.suspected_condition }}</td>
+                <td class="px-4 py-3">
+                  {% set s = c.status.value %}
+                  {% if s == 'pending' %}
+                    <span class="badge badge-info">{{ 'قيد الانتظار' if locale == 'ar' else 'Pending' }}</span>
+                  {% elif s == 'booked' %}
+                    <span class="badge badge-warning">{{ 'محجوزة' if locale == 'ar' else 'Booked' }}</span>
+                  {% elif s == 'completed' %}
+                    <span class="badge badge-warning">{{ 'بانتظار المراجعة' if locale == 'ar' else 'Awaiting review' }}</span>
+                  {% elif s == 'verified' %}
+                    <span class="badge badge-success">{{ 'موثّقة' if locale == 'ar' else 'Verified' }}</span>
+                  {% endif %}
+                </td>
+                <td class="px-4 py-3 text-end">
+                  <a href="/admin/cases/{{ c.id }}" class="btn btn-ghost !text-xs !px-3 !py-1.5">
+                    {{ 'عرض' if locale == 'ar' else 'View' }}
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      {% with icon="case",
+              title=(locale == 'ar' and 'لا توجد حالات' or 'No cases'),
+              message=(locale == 'ar' and 'لم يتم العثور على حالات مطابقة' or 'No matching cases') %}
+        {% include "components/empty_state.html" %}
+      {% endwith %}
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

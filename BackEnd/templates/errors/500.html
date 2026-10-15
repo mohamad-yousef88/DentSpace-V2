@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}500 · DentSpace{% endblock %}
+
+{% block body %}
+<div class="min-h-screen flex items-center justify-center p-6 bg-bg">
+  <div class="text-center max-w-md animate-fade-in-up">
+
+    <div class="w-24 h-24 mx-auto rounded-3xl bg-gradient-to-br from-error to-danger
+                flex items-center justify-center text-white shadow-large mb-6">
+      <span class="text-4xl font-extrabold">500</span>
+    </div>
+
+    <h1 class="text-2xl font-extrabold text-content tracking-tight mb-2">
+      {% if locale == 'ar' %}خطأ في الخادم{% else %}Server error{% endif %}
+    </h1>
+    <p class="text-sm text-content-secondary mb-6">
+      {% if locale == 'ar' %}
+        حدث خطأ غير متوقع. تم تسجيله وسنعمل على إصلاحه.
+      {% else %}
+        Something went wrong. The error has been logged.
+      {% endif %}
+    </p>
+
+    <a href="/admin/dashboard" class="btn btn-primary">
+      {% if locale == 'ar' %}العودة للوحة التحكم{% else %}Back to dashboard{% endif %}
+    </a>
+
+  </div>
+</div>
+{% endblock %}

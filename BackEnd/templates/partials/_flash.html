@@ -1,0 +1,26 @@
+{% if flash %}
+  <div class="mb-6 space-y-2 animate-fade-in-up">
+    {% for item in flash %}
+      <div class="card border-s-4 py-3.5 px-5 flex items-start gap-3
+                  {% if item.kind == 'success' %}border-s-success
+                  {% elif item.kind == 'error' %}border-s-danger
+                  {% else %}border-s-info{% endif %}">
+        <svg class="w-5 h-5 shrink-0 mt-0.5
+                    {% if item.kind == 'success' %}text-success
+                    {% elif item.kind == 'error' %}text-danger
+                    {% else %}text-info{% endif %}"
+             fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round">
+          {% if item.kind == 'success' %}
+            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          {% elif item.kind == 'error' %}
+            <path d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          {% else %}
+            <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          {% endif %}
+        </svg>
+        <span class="text-sm text-content flex-1">{{ item.message }}</span>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}

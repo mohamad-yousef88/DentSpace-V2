@@ -1,0 +1,110 @@
+{% extends "layouts/admin.html" %}
+
+{% block title %}اختبار المكوّنات · DentSpace{% endblock %}
+{% block page_title %}اختبار المكوّنات{% endblock %}
+
+{% block content %}
+<div class="space-y-8 max-w-5xl">
+
+  {# ─── Intro Card ─────────────────────────────────── #}
+  <div class="card animate-fade-in-up">
+    <h2 class="text-xl font-bold text-content mb-2">
+      {{ 'أهلاً بك في لوحة الإدارة' if locale == 'ar' else 'Welcome to the Admin Panel' }}
+    </h2>
+    <p class="text-content-secondary text-sm leading-relaxed">
+      {% if locale == 'ar' %}
+        هذه صفحة اختبار للتحقق من أن نظام التصميم يعمل بشكل صحيح:
+        الألوان، الخط، الوضع الداكن، والاتجاه RTL.
+      {% else %}
+        This is a test page verifying that the design system works correctly:
+        colors, fonts, dark mode, and RTL support.
+      {% endif %}
+    </p>
+  </div>
+
+  {# ─── Stat Cards (staggered) ─────────────────────── #}
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 stagger">
+    {% set stats = [
+      ('المستخدمون', 'Users', '1,248', 'M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-5.13a4 4 0 11-8 0 4 4 0 018 0z', 'primary'),
+      ('الحالات', 'Cases', '386', 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2', 'teal'),
+      ('بانتظار المراجعة', 'Pending', '24', 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z', 'warning'),
+    ] %}
+
+    {% for label_ar, label_en, value, icon, accent in stats %}
+    <div class="card card-hover">
+      <div class="flex items-start justify-between mb-4">
+        <div class="w-12 h-12 rounded-2xl flex items-center justify-center
+                    {% if accent == 'primary' %}bg-primary/10 text-primary
+                    {% elif accent == 'teal' %}bg-teal/10 text-teal
+                    {% elif accent == 'warning' %}bg-warning/10 text-warning
+                    {% endif %}">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="{{ icon }}"/>
+          </svg>
+        </div>
+      </div>
+      <div class="text-3xl font-extrabold text-content tracking-tight"
+           data-count-to="{{ value | replace(',', '') | int }}">
+        {{ value }}
+      </div>
+      <div class="text-sm text-content-secondary mt-1">
+        {{ label_ar if locale == 'ar' else label_en }}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  {# ─── Buttons ────────────────────────────────────── #}
+  <div class="card">
+    <h3 class="text-base font-bold text-content mb-4">
+      {{ 'الأزرار' if locale == 'ar' else 'Buttons' }}
+    </h3>
+    <div class="flex flex-wrap gap-3">
+      <button class="btn btn-primary">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        {{ 'إضافة' if locale == 'ar' else 'Add' }}
+      </button>
+      <button class="btn btn-outline">{{ 'إلغاء' if locale == 'ar' else 'Cancel' }}</button>
+      <button class="btn btn-ghost">{{ 'خيارات' if locale == 'ar' else 'Options' }}</button>
+      <button class="btn btn-danger">{{ 'حذف' if locale == 'ar' else 'Delete' }}</button>
+    </div>
+  </div>
+
+  {# ─── Badges ─────────────────────────────────────── #}
+  <div class="card">
+    <h3 class="text-base font-bold text-content mb-4">
+      {{ 'الشارات' if locale == 'ar' else 'Badges' }}
+    </h3>
+    <div class="flex flex-wrap gap-2">
+      <span class="badge badge-success">{{ 'مكتمل' if locale == 'ar' else 'Completed' }}</span>
+      <span class="badge badge-warning">{{ 'قيد الانتظار' if locale == 'ar' else 'Pending' }}</span>
+      <span class="badge badge-danger">{{ 'مرفوض' if locale == 'ar' else 'Rejected' }}</span>
+      <span class="badge badge-info">{{ 'معتمد' if locale == 'ar' else 'Approved' }}</span>
+      <span class="badge badge-neutral">{{ 'مسودة' if locale == 'ar' else 'Draft' }}</span>
+    </div>
+  </div>
+
+  {# ─── Form ───────────────────────────────────────── #}
+  <div class="card">
+    <h3 class="text-base font-bold text-content mb-4">
+      {{ 'النموذج' if locale == 'ar' else 'Form' }}
+    </h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm font-medium text-content mb-1.5">
+          {{ 'الاسم' if locale == 'ar' else 'Name' }}
+        </label>
+        <input type="text" class="input" placeholder="{{ 'أدخل الاسم' if locale == 'ar' else 'Enter name' }}">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-content mb-1.5">
+          {{ 'البريد الإلكتروني' if locale == 'ar' else 'Email' }}
+        </label>
+        <input type="email" class="input" placeholder="name@example.com" dir="ltr">
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

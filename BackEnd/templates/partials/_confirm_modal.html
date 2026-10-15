@@ -1,0 +1,31 @@
+<dialog id="confirm-modal"
+        class="rounded-2xl p-0 w-full max-w-sm border border-line bg-surface shadow-large"
+        style="margin: auto;">
+  <div class="p-6">
+
+    <div class="flex items-start gap-3 mb-5">
+      <div class="w-10 h-10 rounded-xl bg-warning/15 text-warning flex items-center justify-center shrink-0">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+             stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 9v2m0 4h.01M5.07 19h13.86a2 2 0 001.74-3l-6.93-12a2 2 0 00-3.48 0L2.33 16a2 2 0 001.74 3z"/>
+        </svg>
+      </div>
+      <div class="min-w-0">
+        <h3 class="text-lg font-bold text-content" data-confirm-title>
+          {% if locale == 'ar' %}تأكيد{% else %}Confirm{% endif %}
+        </h3>
+        <p class="text-sm text-content-secondary mt-1" data-confirm-message></p>
+      </div>
+    </div>
+
+    <div class="flex gap-2 justify-end">
+      <button type="button" data-confirm-cancel class="btn btn-ghost">
+        {% if locale == 'ar' %}إلغاء{% else %}Cancel{% endif %}
+      </button>
+      <button type="button" data-confirm-ok class="btn btn-primary">
+        {% if locale == 'ar' %}تأكيد{% else %}Confirm{% endif %}
+      </button>
+    </div>
+
+  </div>
+</dialog>

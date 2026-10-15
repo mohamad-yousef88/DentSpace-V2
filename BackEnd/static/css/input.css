@@ -1,0 +1,305 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ═══════════════════════════════════════════════════════════════
+   DentSpace Design Tokens
+   Mirrors FrontEnd/lib/core/theme/app_colors.dart
+   Format: "R G B" so Tailwind can apply opacity modifiers
+   ═══════════════════════════════════════════════════════════════ */
+
+@layer base {
+  :root {
+    /* ─── Brand ──────────────────────────────────────── */
+    --color-primary: 13 110 253;         /* #0D6EFD */
+    --color-primary-light: 77 148 255;   /* #4D94FF */
+    --color-primary-dark: 10 88 202;     /* #0A58CA */
+    --color-primary-surface: 231 240 255;/* #E7F0FF */
+
+    --color-secondary: 20 184 166;       /* #14B8A6 */
+    --color-secondary-light: 94 234 212; /* #5EEAD4 */
+    --color-secondary-dark: 15 118 110;  /* #0F766E */
+
+    /* ─── Status ─────────────────────────────────────── */
+    --color-success: 16 185 129;         /* #10B981 */
+    --color-warning: 245 158 11;         /* #F59E0B */
+    --color-error: 239 68 68;            /* #EF4444 */
+    --color-info: 59 130 246;            /* #3B82F6 */
+
+    /* ─── Light surfaces ─────────────────────────────── */
+    --color-bg: 248 250 252;             /* #F8FAFC */
+    --color-surface: 255 255 255;        /* #FFFFFF */
+    --color-surface-variant: 241 245 249;/* #F1F5F9 */
+
+    --color-text-primary: 15 23 42;      /* #0F172A */
+    --color-text-secondary: 100 116 139; /* #64748B */
+    --color-text-tertiary: 148 163 184;  /* #94A3B8 */
+
+    --color-border: 226 232 240;         /* #E2E8F0 */
+  }
+
+  .dark {
+    --color-bg: 11 18 32;                /* #0B1220 */
+    --color-surface: 17 26 44;           /* #111A2C */
+    --color-surface-variant: 26 37 64;   /* #1A2540 */
+
+    --color-text-primary: 241 245 249;   /* #F1F5F9 */
+    --color-text-secondary: 148 163 184; /* #94A3B8 */
+    --color-text-tertiary: 100 116 139;  /* #64748B */
+
+    --color-border: 30 41 59;            /* #1E293B */
+
+    --color-primary: 77 148 255;         /* lighter for dark mode */
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-bg text-content font-sans antialiased;
+    transition: background-color 200ms ease, color 200ms ease;
+  }
+
+  /* Arabic typography */
+  html[lang="ar"] body {
+    letter-spacing: 0;
+  }
+
+  /* Scrollbar — subtle, theme-aware */
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    background: rgb(var(--color-border));
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgb(var(--color-text-tertiary));
+  }
+
+  /* Focus ring uses brand color */
+  :focus-visible {
+    outline: 2px solid rgb(var(--color-primary));
+    outline-offset: 2px;
+  }
+
+  /* Remove autofill yellow */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 1000px rgb(var(--color-surface)) inset;
+    -webkit-text-fill-color: rgb(var(--color-text-primary));
+    transition: background-color 5000s ease-in-out 0s;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Components
+   ═══════════════════════════════════════════════════════════════ */
+@layer components {
+  /* ─── Button ─────────────────────────────────────── */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2
+           px-4 py-2.5 rounded-xl font-semibold text-sm
+           transition-all duration-200 ease-out-expo
+           disabled:opacity-50 disabled:cursor-not-allowed
+           focus:outline-none focus:ring-2 focus:ring-primary/40
+           focus:ring-offset-2 focus:ring-offset-bg;
+  }
+
+  .btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+  }
+
+  .btn:active:not(:disabled) {
+    transform: translateY(0) scale(0.98);
+  }
+
+  .btn-primary {
+    @apply bg-primary text-white shadow-soft;
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    @apply bg-primary-dark shadow-medium;
+  }
+
+  .btn-outline {
+    @apply bg-transparent text-primary border border-line;
+  }
+
+  .btn-outline:hover:not(:disabled) {
+    @apply bg-primary-surface border-primary;
+  }
+
+  .btn-ghost {
+    @apply bg-transparent text-content-secondary;
+  }
+
+  .btn-ghost:hover:not(:disabled) {
+    @apply bg-surface-variant text-content;
+  }
+
+  .btn-danger {
+    @apply bg-danger text-white;
+  }
+
+  .btn-danger:hover:not(:disabled) {
+    filter: brightness(0.92);
+    box-shadow: 0 8px 20px rgb(var(--color-error) / 0.25);
+  }
+
+  /* ─── Card ───────────────────────────────────────── */
+  .card {
+    @apply bg-surface border border-line rounded-2xl p-5 shadow-soft;
+    transition: box-shadow 200ms ease, transform 200ms ease;
+  }
+
+  .card-hover:hover {
+    @apply shadow-medium;
+    transform: translateY(-2px);
+  }
+
+  /* ─── Input ──────────────────────────────────────── */
+  .input {
+    @apply w-full px-4 py-3 rounded-xl text-sm
+           bg-surface-variant border border-line
+           text-content placeholder:text-content-tertiary
+           transition-all duration-200
+           focus:outline-none focus:ring-2 focus:ring-primary/30
+           focus:border-primary focus:bg-surface;
+  }
+
+  /* ─── Badge ──────────────────────────────────────── */
+  .badge {
+    @apply inline-flex items-center gap-1 px-2.5 py-1 rounded-full
+           text-xs font-semibold whitespace-nowrap;
+  }
+
+  .badge-success {
+    background: rgb(var(--color-success) / 0.12);
+    color: rgb(var(--color-success));
+  }
+
+  .badge-warning {
+    background: rgb(var(--color-warning) / 0.12);
+    color: rgb(var(--color-warning));
+  }
+
+  .badge-danger {
+    background: rgb(var(--color-error) / 0.12);
+    color: rgb(var(--color-error));
+  }
+
+  .badge-info {
+    background: rgb(var(--color-info) / 0.12);
+    color: rgb(var(--color-info));
+  }
+
+  .badge-neutral {
+    @apply bg-surface-variant text-content-secondary;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Utilities
+   ═══════════════════════════════════════════════════════════════ */
+@layer utilities {
+  /* ─── Stagger ─────────────────────────────────────── */
+  .stagger > * {
+    animation: fadeInUp 400ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .stagger > *:nth-child(1) { animation-delay: 0ms; }
+  .stagger > *:nth-child(2) { animation-delay: 50ms; }
+  .stagger > *:nth-child(3) { animation-delay: 100ms; }
+  .stagger > *:nth-child(4) { animation-delay: 150ms; }
+  .stagger > *:nth-child(5) { animation-delay: 200ms; }
+  .stagger > *:nth-child(6) { animation-delay: 250ms; }
+  .stagger > *:nth-child(n+7) { animation-delay: 300ms; }
+
+  /* ─── Glassmorphism (sidebar header) ──────────────── */
+  .glass {
+    backdrop-filter: blur(12px) saturate(180%);
+    background-color: rgb(var(--color-surface) / 0.85);
+  }
+
+  /* ─── Reduced motion ──────────────────────────────── */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+  /* ═══════════════════════════════════════════════════════════════
+   Toast notifications
+   ═══════════════════════════════════════════════════════════════ */
+@layer components {
+  #toast-container {
+    @apply fixed top-4 end-4 z-[100] flex flex-col gap-2 pointer-events-none;
+    max-width: 380px;
+  }
+
+  .toast {
+    @apply pointer-events-auto card border-s-4 py-3.5 px-5 flex items-start gap-3;
+    animation: toastIn 300ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    backdrop-filter: blur(12px);
+    background-color: rgb(var(--color-surface) / 0.95);
+  }
+
+  .toast.leaving {
+    animation: toastOut 200ms ease-in both;
+  }
+
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateX(24px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  @keyframes toastOut {
+    from { opacity: 1; transform: translateX(0); max-height: 200px; }
+    to   { opacity: 0; transform: translateX(24px); max-height: 0; padding: 0; margin: 0; }
+  }
+
+  /* ─── Loading spinner on buttons ─────────────── */
+  .btn.is-loading {
+    position: relative;
+    color: transparent !important;
+    pointer-events: none;
+  }
+
+  .btn.is-loading::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 9999px;
+    animation: spin 600ms linear infinite;
+    color: white;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* ─── Mobile sidebar overlay ─────────────────── */
+  .mobile-drawer-overlay {
+    @apply fixed inset-0 z-40 bg-black/60 backdrop-blur-sm;
+    animation: fadeIn 200ms ease both;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RTL fixes for toast
+   ═══════════════════════════════════════════════════════════════ */
+html[dir="rtl"] .toast { border-inline-start-width: 4px; }
+html[dir="rtl"] #toast-container { inset-inline-start: auto; }
+}

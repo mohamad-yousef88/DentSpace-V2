@@ -1,0 +1,162 @@
+{% extends "layouts/admin.html" %}
+
+{% block title %}{{ user.full_name }} · DentSpace{% endblock %}
+{% block page_title %}{{ 'تفاصيل المستخدم' if locale == 'ar' else 'User details' }}{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl space-y-5">
+
+  <a href="/admin/users" class="inline-flex items-center gap-1.5 text-sm text-content-secondary hover:text-content transition-colors">
+    <svg class="w-4 h-4 {{ 'rotate-180' if locale == 'ar' else '' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M15 19l-7-7 7-7"/>
+    </svg>
+    {{ 'العودة للمستخدمين' if locale == 'ar' else 'Back to users' }}
+  </a>
+
+  {# Header #}
+  <div class="card">
+    <div class="flex flex-wrap items-center gap-5">
+      {% if user.profile_image_url %}
+        <img src="{{ user.profile_image_url }}" alt="" class="w-20 h-20 rounded-2xl object-cover ring-2 ring-primary/20">
+      {% else %}
+        <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary to-primary-dark
+                    flex items-center justify-center text-white text-3xl font-bold shadow-medium">
+          {{ user.full_name[0].upper() if user.full_name else '?' }}
+        </div>
+      {% endif %}
+      <div class="flex-1 min-w-0">
+        <h2 class="text-xl font-bold text-content truncate">{{ user.full_name }}</h2>
+        <p class="text-sm text-content-secondary mt-0.5 truncate" dir="ltr">{{ user.email }}</p>
+        <div class="flex flex-wrap gap-2 mt-2">
+          {% if user.role.value == 'patient' %}
+            <span class="badge badge-info">{{ 'مريض' if locale == 'ar' else 'Patient' }}</span>
+          {% elif user.role.value == 'doctor' %}
+            <span class="badge badge-success">{{ 'طبيب' if locale == 'ar' else 'Doctor' }}</span>
+          {% else %}
+            <span class="badge badge-warning">{{ 'مشرف' if locale == 'ar' else 'Admin' }}</span>
+          {% endif %}
+          {% if user.is_active %}
+            <span class="badge badge-success">{{ 'نشط' if locale == 'ar' else 'Active' }}</span>
+          {% else %}
+            <span class="badge badge-danger">{{ 'معطّل' if locale == 'ar' else 'Disabled' }}</span>
+          {% endif %}
+          {% if user.is_email_verified %}
+            <span class="badge badge-success">{{ 'البريد موثّق' if locale == 'ar' else 'Email verified' }}</span>
+          {% endif %}
+        </div>
+      </div>
+      {% if user.id != current_admin.id %}
+        <form method="post" action="/admin/users/{{ user.id }}/toggle">
+          <button type="submit" class="btn {% if user.is_active %}btn-outline{% else %}btn-primary{% endif %}">
+            {{ 'تعطيل الحساب' if user.is_active and locale == 'ar' else
+               ('Disable account' if user.is_active else
+               ('تفعيل الحساب' if locale == 'ar' else 'Enable account')) }}
+          </button>
+        </form>
+      {% endif %}
+    </div>
+  </div>
+
+  {# Info grid #}
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+    <div class="card">
+      <p class="text-xs font-semibold text-content-tertiary uppercase mb-3">
+        {{ 'معلومات الاتصال' if locale == 'ar' else 'Contact info' }}
+      </p>
+      <dl class="space-y-3 text-sm">
+        <div class="flex justify-between gap-3">
+          <dt class="text-content-secondary">{{ 'الهاتف' if locale == 'ar' else 'Phone' }}</dt>
+          <dd class="text-content font-medium" dir="ltr">{{ user.phone }}</dd>
+        </div>
+        {% if user.university_id %}
+        <div class="flex justify-between gap-3">
+          <dt class="text-content-secondary">{{ 'الرقم الجامعي' if locale == 'ar' else 'University ID' }}</dt>
+          <dd class="text-content font-medium font-mono text-xs" dir="ltr">{{ user.university_id }}</dd>
+        </div>
+        {% endif %}
+      </dl>
+    </div>
+
+    <div class="card">
+      <p class="text-xs font-semibold text-content-tertiary uppercase mb-3">
+        {{ 'معلومات شخصية' if locale == 'ar' else 'Personal info' }}
+      </p>
+      <dl class="space-y-3 text-sm">
+        <div class="flex justify-between gap-3">
+          <dt class="text-content-secondary">{{ 'الجنس' if locale == 'ar' else 'Gender' }}</dt>
+          <dd class="text-content font-medium">
+            {% if user.gender %}{{ ('ذكر' if user.gender.value == 'male' else 'أنثى') if locale == 'ar' else user.gender.value|capitalize }}{% else %}—{% endif %}
+          </dd>
+        </div>
+        <div class="flex justify-between gap-3">
+          <dt class="text-content-secondary">{{ 'العمر' if locale == 'ar' else 'Age' }}</dt>
+          <dd class="text-content font-medium">{{ user.age or '—' }}</dd>
+        </div>
+        <div class="flex justify-between gap-3">
+          <dt class="text-content-secondary">{{ 'تاريخ التسجيل' if locale == 'ar' else 'Joined' }}</dt>
+          <dd class="text-content font-medium" dir="ltr">{{ user.created_at.strftime('%Y-%m-%d') if user.created_at else '—' }}</dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+
+  {% if user.id != current_admin.id %}
+    <div class="card flex flex-wrap gap-3">
+      <button type="button"
+              onclick="document.getElementById('pwd-reset').showModal()"
+              class="btn btn-outline">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+        </svg>
+        {{ 'إعادة تعيين كلمة المرور' if locale == 'ar' else 'Reset password' }}
+      </button>
+      <form method="post" action="/admin/users/{{ user.id }}/delete"
+            data-confirm="{% if locale == 'ar' %}حذف هذا المستخدم نهائياً؟{% else %}Delete this user permanently?{% endif %}"
+            data-confirm-title="{% if locale == 'ar' %}تأكيد الحذف{% else %}Confirm delete{% endif %}"
+            data-confirm-ok="{% if locale == 'ar' %}حذف{% else %}Delete{% endif %}"
+            data-confirm-danger="1">
+        <button type="submit" class="btn btn-danger">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3"/>
+          </svg>
+          {{ 'حذف الحساب' if locale == 'ar' else 'Delete account' }}
+        </button>
+      </form>
+    </div>
+
+    <dialog id="pwd-reset"
+            class="rounded-2xl p-0 w-full max-w-md border border-line bg-surface shadow-large"
+            style="margin: auto;">
+      <form method="post" action="/admin/users/{{ user.id }}/reset-password" class="p-6 space-y-4">
+        <div>
+          <h3 class="text-lg font-bold text-content">
+            {% if locale == 'ar' %}إعادة تعيين كلمة المرور{% else %}Reset password{% endif %}
+          </h3>
+          <p class="text-sm text-content-secondary mt-1">
+            {{ user.full_name }} — <span dir="ltr">{{ user.email }}</span>
+          </p>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-content mb-1.5">
+            {% if locale == 'ar' %}كلمة المرور الجديدة{% else %}New password{% endif %}
+          </label>
+          <input type="password" name="new_password" required minlength="12"
+                 class="input" placeholder="••••••••••••">
+          <p class="text-xs text-content-tertiary mt-1.5">
+            {% if locale == 'ar' %}12 حرفاً على الأقل{% else %}At least 12 characters{% endif %}
+          </p>
+        </div>
+        <div class="flex gap-2 justify-end pt-2">
+          <button type="button" onclick="this.closest('dialog').close()" class="btn btn-ghost">
+            {% if locale == 'ar' %}إلغاء{% else %}Cancel{% endif %}
+          </button>
+          <button type="submit" class="btn btn-primary">
+            {% if locale == 'ar' %}تعيين{% else %}Set password{% endif %}
+          </button>
+        </div>
+      </form>
+    </dialog>
+  {% endif %}
+
+</div>
+{% endblock %}

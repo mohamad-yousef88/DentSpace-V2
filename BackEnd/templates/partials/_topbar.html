@@ -1,0 +1,61 @@
+{# Topbar — receives `page_title` from parent context #}
+<header class="h-16 flex items-center justify-between gap-3 px-4 sm:px-6
+               bg-surface border-b border-line sticky top-0 z-30 glass">
+
+  <div class="flex items-center gap-2 min-w-0">
+
+    {# Hamburger (mobile only) #}
+    <button type="button"
+            data-mobile-menu-open
+            class="lg:hidden w-10 h-10 -ms-2 rounded-xl flex items-center justify-center
+                   text-content-secondary hover:text-content hover:bg-surface-variant
+                   transition-colors shrink-0"
+            aria-label="Open menu">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+           stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
+    </button>
+
+    <h1 id="page-title" class="text-base sm:text-lg font-bold text-content truncate">
+      {{ page_title or '' }}
+    </h1>
+  </div>
+
+  <div class="flex items-center gap-2 shrink-0">
+
+    {# Language toggle #}
+    <button type="button"
+            data-lang-switch="{{ 'en' if locale == 'ar' else 'ar' }}"
+            class="h-10 px-3 rounded-xl flex items-center gap-2
+                   text-content-secondary hover:text-content hover:bg-surface-variant
+                   transition-colors duration-150"
+            title="{{ 'Switch to English' if locale == 'ar' else 'التبديل إلى العربية' }}">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+           stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
+      </svg>
+      <span class="text-xs font-bold hidden sm:inline">{{ 'EN' if locale == 'ar' else 'ع' }}</span>
+    </button>
+
+    {# Theme toggle #}
+    <button type="button"
+            data-theme-toggle
+            class="w-10 h-10 rounded-xl flex items-center justify-center
+                   text-content-secondary hover:text-content hover:bg-surface-variant
+                   transition-colors duration-150"
+            aria-label="Toggle theme">
+      <svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor"
+           viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="4"/>
+        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+      </svg>
+      <svg class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor"
+           viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+      </svg>
+    </button>
+
+  </div>
+</header>

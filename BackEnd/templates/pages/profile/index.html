@@ -1,0 +1,122 @@
+{% extends "layouts/admin.html" %}
+
+{% block title %}Profile · DentSpace{% endblock %}
+{% block page_title %}{% if locale == 'ar' %}الملف الشخصي{% else %}Profile{% endif %}{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl space-y-5">
+
+  <div class="card">
+    <div class="flex flex-wrap items-center gap-5">
+      {% if current_admin.profile_image_url %}
+        <img src="{{ current_admin.profile_image_url }}" alt=""
+             class="w-20 h-20 rounded-2xl object-cover ring-2 ring-primary/20">
+      {% else %}
+        <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary to-primary-dark
+                    flex items-center justify-center text-white text-3xl font-bold shadow-medium">
+          {{ current_admin.full_name[0].upper() if current_admin.full_name else '?' }}
+        </div>
+      {% endif %}
+      <div class="flex-1 min-w-0">
+        <h2 class="text-xl font-bold text-content truncate">{{ current_admin.full_name }}</h2>
+        <p class="text-sm text-content-secondary mt-0.5 truncate" dir="ltr">{{ current_admin.email }}</p>
+        <span class="badge badge-warning mt-2 inline-flex">
+          {% if locale == 'ar' %}مشرف{% else %}Administrator{% endif %}
+        </span>
+      </div>
+
+      {# Avatar upload form #}
+      <form method="post" action="/admin/profile/avatar" enctype="multipart/form-data" class="shrink-0">
+        <input type="file" name="avatar" accept="image/*" class="hidden" id="avatar-input"
+               onchange="this.form.submit()">
+        <label for="avatar-input" class="btn btn-outline cursor-pointer">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+          </svg>
+          {{ 'تغيير الصورة' if locale == 'ar' else 'Change avatar' }}
+        </label>
+      </form>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="flex items-center gap-2 mb-5">
+      <div class="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+        </svg>
+      </div>
+      <h3 class="text-base font-bold text-content">
+        {% if locale == 'ar' %}تعديل المعلومات{% else %}Edit information{% endif %}
+      </h3>
+    </div>
+
+    <form method="post" action="/admin/profile" class="space-y-4">
+
+      <div>
+        <label class="block text-sm font-semibold text-content mb-1.5">
+          {% if locale == 'ar' %}الاسم الكامل{% else %}Full name{% endif %}
+          <span class="text-danger">*</span>
+        </label>
+        <input type="text" name="full_name" required minlength="10" maxlength="150"
+               value="{{ current_admin.full_name }}" class="input">
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold text-content mb-1.5">
+          {% if locale == 'ar' %}البريد الإلكتروني{% else %}Email{% endif %}
+        </label>
+        <input type="email" value="{{ current_admin.email }}"
+               class="input opacity-60 cursor-not-allowed" disabled dir="ltr">
+        <p class="text-xs text-content-tertiary mt-1.5">
+          {% if locale == 'ar' %}البريد الإلكتروني غير قابل للتغيير{% else %}Email cannot be changed{% endif %}
+        </p>
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold text-content mb-1.5">
+          {% if locale == 'ar' %}الهاتف{% else %}Phone{% endif %}
+          <span class="text-danger">*</span>
+        </label>
+        <input type="tel" name="phone" required minlength="10" maxlength="20"
+               value="{{ current_admin.phone }}" class="input" dir="ltr">
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-semibold text-content mb-1.5">
+            {% if locale == 'ar' %}الجنس{% else %}Gender{% endif %}
+          </label>
+          <select name="gender" class="input">
+            <option value="">—</option>
+            <option value="male" {% if current_admin.gender and current_admin.gender.value == 'male' %}selected{% endif %}>
+              {% if locale == 'ar' %}ذكر{% else %}Male{% endif %}
+            </option>
+            <option value="female" {% if current_admin.gender and current_admin.gender.value == 'female' %}selected{% endif %}>
+              {% if locale == 'ar' %}أنثى{% else %}Female{% endif %}
+            </option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-content mb-1.5">
+            {% if locale == 'ar' %}العمر{% else %}Age{% endif %}
+          </label>
+          <input type="number" name="age" min="18" max="80"
+                 value="{{ current_admin.age or '' }}" class="input">
+        </div>
+      </div>
+
+      <div class="pt-4 border-t border-line flex items-center gap-3">
+        <button type="submit" class="btn btn-primary">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 6L9 17l-5-5"/>
+          </svg>
+          {% if locale == 'ar' %}حفظ التعديلات{% else %}Save changes{% endif %}
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+</div>
+{% endblock %}

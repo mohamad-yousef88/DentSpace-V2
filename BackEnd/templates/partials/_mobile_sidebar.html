@@ -1,0 +1,94 @@
+{# ─── Mobile drawer overlay ─────────────────────── #}
+<div id="mobile-drawer-overlay"
+     class="mobile-drawer-overlay hidden lg:hidden"
+     data-mobile-menu-close></div>
+
+{# ─── Mobile drawer ─────────────────────────────── #}
+<aside id="mobile-drawer"
+       class="lg:hidden fixed top-0 bottom-0 z-50 w-72 max-w-[80vw]
+              bg-surface border-e border-line
+              flex flex-col
+              transition-transform duration-300 ease-out
+              {% if locale == 'ar' %}end-0 translate-x-full{% else %}start-0 -translate-x-full{% endif %}">
+
+  {# ─── Header ───────────────────────────────────── #}
+  <div class="h-16 flex items-center justify-between gap-3 px-5 border-b border-line shrink-0">
+    <div class="flex items-center gap-3 min-w-0">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-primary-dark
+                  flex items-center justify-center text-white shrink-0">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/>
+        </svg>
+      </div>
+      <div class="flex flex-col min-w-0">
+        <span class="text-sm font-extrabold text-content leading-none">DentSpace</span>
+        <span class="text-[10px] text-content-tertiary mt-0.5">Admin Panel</span>
+      </div>
+    </div>
+    <button type="button"
+            data-mobile-menu-close
+            class="w-9 h-9 rounded-xl flex items-center justify-center
+                   text-content-secondary hover:text-content hover:bg-surface-variant
+                   transition-colors shrink-0"
+            aria-label="Close menu">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+           stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 6L6 18M6 6l12 12"/>
+      </svg>
+    </button>
+  </div>
+
+  {# ─── Navigation ───────────────────────────────── #}
+  <nav class="flex-1 p-3 space-y-0.5 overflow-y-auto">
+    {% set items = [
+      ('dashboard', 'لوحة التحكم', 'Dashboard',
+       'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6'),
+      ('users', 'المستخدمون', 'Users',
+       'M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-5.13a4 4 0 11-8 0 4 4 0 018 0zm6 0a3 3 0 11-6 0 3 3 0 016 0z'),
+      ('doctors', 'الأطباء', 'Doctors',
+       'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z'),
+      ('cases', 'الحالات', 'Cases',
+       'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2'),
+      ('profile', 'الملف الشخصي', 'Profile',
+       'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'),
+    ] %}
+    {% set current = request.url.path %}
+
+    {% for key, ar, en, icon in items %}
+      {% set href = '/admin/' + key %}
+      {% set is_active = current.startswith(href) %}
+      <a href="{{ href }}"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium
+                transition-colors duration-150
+                {% if is_active %}
+                  bg-primary/10 text-primary
+                {% else %}
+                  text-content-secondary hover:text-content hover:bg-surface-variant
+                {% endif %}">
+        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="{{ icon }}"/>
+        </svg>
+        <span>{{ ar if locale == 'ar' else en }}</span>
+      </a>
+    {% endfor %}
+  </nav>
+
+  {# ─── Footer ───────────────────────────────────── #}
+  <div class="p-3 border-t border-line shrink-0">
+    <form method="post" action="/admin/logout">
+      <button type="submit"
+              class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium
+                     text-content-secondary hover:text-danger hover:bg-danger/10
+                     transition-colors duration-150">
+        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+        </svg>
+        <span>{{ 'تسجيل الخروج' if locale == 'ar' else 'Logout' }}</span>
+      </button>
+    </form>
+  </div>
+
+</aside>

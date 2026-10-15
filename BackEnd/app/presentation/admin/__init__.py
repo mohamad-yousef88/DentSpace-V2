@@ -1,0 +1,1 @@
+"""Admin Panel — Jinja-rendered UI for platform administrators."""

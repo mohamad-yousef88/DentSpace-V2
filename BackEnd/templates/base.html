@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html
+  lang="{{ locale }}"
+  dir="{{ 'rtl' if locale == 'ar' else 'ltr' }}"
+  class="{{ 'dark' if theme == 'dark' else '' }}"
+>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light dark" />
+
+  <title>{% block title %}DentSpace{% endblock %}</title>
+
+  {# FOUC prevention #}
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('dentspace-theme');
+        var d = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (t === 'dark' || (!t && d)) {
+          document.documentElement.classList.add('dark');
+          document.cookie = 'dentspace_theme=dark; path=/; max-age=31536000; SameSite=Lax';
+        } else {
+          document.documentElement.classList.remove('dark');
+          document.cookie = 'dentspace_theme=light; path=/; max-age=31536000; SameSite=Lax';
+        }
+      } catch (e) {}
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="{{ request.url_for('static', path='css/app.css') }}" />
+
+  {% block head %}{% endblock %}
+</head>
+<body>
+  {% block body %}{% endblock %}
+
+  {# ─── Toast container (always present) ──────────────── #}
+  <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+  {# ─── Server flash messages → consumed by JS ────────── #}
+  {% if flash %}
+    <script id="flash-data" type="application/json">{{ flash | tojson }}</script>
+  {% endif %}
+
+  {# ─── Shared confirm modal ──────────────────────────── #}
+  {% include "partials/_confirm_modal.html" %}
+
+  <script src="{{ request.url_for('static', path='js/animations.js') }}" defer></script>
+
+  <script>
+    // Theme toggle
+    document.addEventListener('click', function (e) {
+      var t = e.target.closest('[data-theme-toggle]');
+      if (!t) return;
+      var root = document.documentElement;
+      var isDark = root.classList.toggle('dark');
+      try { localStorage.setItem('dentspace-theme', isDark ? 'dark' : 'light'); } catch (err) {}
+      document.cookie = 'dentspace_theme=' + (isDark ? 'dark' : 'light') +
+        '; path=/; max-age=31536000; SameSite=Lax';
+    });
+
+    // Language toggle
+    document.addEventListener('click', function (e) {
+      var t = e.target.closest('[data-lang-switch]');
+      if (!t) return;
+      var lang = t.getAttribute('data-lang-switch');
+      if (!lang) return;
+      document.cookie = 'dentspace_locale=' + lang +
+        '; path=/; max-age=31536000; SameSite=Lax';
+      window.location.reload();
+    });
+  </script>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>
